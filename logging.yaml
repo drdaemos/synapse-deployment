@@ -1,0 +1,22 @@
+version: 1
+disable_existing_loggers: false
+
+formatters:
+  normal:
+    format: '%(asctime)s [%(process)d] %(levelname)-5s %(name)s %(message)s'
+
+handlers:
+  console:
+    class: logging.StreamHandler
+    formatter: normal
+    stream: ext://sys.stdout
+
+root:
+  handlers: [console]
+  level: INFO
+
+loggers:
+  synapse:
+    level: INFO
+  synapse.storage.SQL:
+    level: INFO

@@ -1,0 +1,52 @@
+# Server name (CRITICAL - cannot change after first run)
+server_name: "drdaemos.cc"
+
+# Listen on port 8008 (HTTP)
+listeners:
+  - port: 8008
+    tls: false
+    type: http
+    x_forwarded: true
+    bind_addresses: ['0.0.0.0']
+    resources:
+      - names: [client, federation]
+        compress: false
+
+# Database (will use env var at runtime)
+database:
+  name: psycopg2
+  args:
+    user: ${DB_USER}
+    password: ${DB_PASSWORD}
+    database: ${DB_NAME}
+    host: ${DB_HOST}
+    port: ${DB_PORT}
+    cp_min: 5
+    cp_max: 10
+
+# Logging
+log_config: "/data/logging.yaml"
+
+# Registration (allow new users)
+enable_registration: true
+registration_requires_token: false
+
+# Metrics (optional, good for monitoring)
+metrics_port: 9090
+metrics_bind_address: '0.0.0.0'
+
+# Federation (allow other servers to connect)
+federation_domain_whitelist: []
+
+# Media storage (in-memory for now, can use S3 later)
+media_store_path: "/data/media_store"
+
+# Signing key (auto-generated on first run)
+signing_key_path: "/data/homeserver.signing.key"
+
+# Report stats (optional)
+report_stats: false
+
+# Trusted key servers for federation
+trusted_key_servers:
+  - server_name: "matrix.org"
