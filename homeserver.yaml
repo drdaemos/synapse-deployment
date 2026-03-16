@@ -1,5 +1,5 @@
 # Server name (CRITICAL - cannot change after first run)
-server_name: "drdaemos.cc"
+server_name: "${SERVER_NAME}"
 
 # Listen on port 8008 (HTTP)
 listeners:

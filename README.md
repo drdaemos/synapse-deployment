@@ -11,7 +11,10 @@ Deploy a Matrix Synapse homeserver on Railway.com with PostgreSQL.
    - Railway will automatically create and link the database
 
 3. **Configure environment variables:**
-   Railway will auto-populate database variables, but verify these are set:
+   Railway will auto-populate database variables, but you need to add:
+   - `SERVER_NAME` - Your Matrix server domain (e.g., `matrix.yourdomain.com`)
+
+   Verify these database variables are set (auto-populated by Railway):
    - `DB_USER`
    - `DB_PASSWORD`
    - `DB_NAME`
@@ -24,10 +27,10 @@ Deploy a Matrix Synapse homeserver on Railway.com with PostgreSQL.
    - Set mount path: `/data`
    - This ensures your signing keys and media don't get lost on redeploys
 
-5. **Set up a custom domain** (optional but recommended):
+5. **Set up a custom domain** (recommended):
    - In Settings → Networking, add your domain
    - Point your DNS to Railway's provided URL
-   - Your server name is: `drdaemos.cc` (configured in homeserver.yaml)
+   - Make sure `SERVER_NAME` matches your domain
 
 ## Important Notes
 
