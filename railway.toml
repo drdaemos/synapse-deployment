@@ -8,5 +8,5 @@ restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
 
 [[deploy.healthcheck]]
-path = "/health"
+path = "/_matrix/client/versions"
 port = 8008

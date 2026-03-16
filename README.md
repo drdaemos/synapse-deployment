@@ -8,35 +8,56 @@ Deploy a Matrix Synapse homeserver on Railway.com with PostgreSQL.
 
 2. **Add PostgreSQL database:**
    - In Railway dashboard, click "New" → "Database" → "PostgreSQL"
-   - Railway will automatically create and link the database
+   - Railway will automatically create and link the database with environment variables
 
-3. **Configure environment variables:**
-   Railway will auto-populate database variables, but you need to add:
-   - `SERVER_NAME` - Your Matrix server domain (e.g., `matrix.yourdomain.com`)
+3. **Set environment variables:**
+   - `SERVER_NAME` = `matrix.yourdomain.com` (your Matrix server domain)
 
-   Verify these database variables are set (auto-populated by Railway):
-   - `DB_USER`
-   - `DB_PASSWORD`
-   - `DB_NAME`
-   - `DB_HOST`
-   - `DB_PORT`
+4. **Deploy and get the signing key:**
+   - Deploy once to let Synapse generate a signing key
+   - In Railway, open the service logs or use CLI:
+     ```bash
+     railway logs | grep "signing key"
+     ```
+   - Or connect to your service and run:
+     ```bash
+     cat /data/homeserver.signing.key
+     ```
+   - Copy the entire output (format: `ed25519 a_RXGa "base64_key_here"`)
 
-4. **Add a volume for persistent storage:**
-   - In your service settings, go to "Volumes"
-   - Click "New Volume"
+5. **Save the signing key (CRITICAL):**
+   - In Railway dashboard, add environment variable:
+   - `SYNAPSE_SIGNING_KEY` = `ed25519 a_RXGa "your_key_here"`
+   - This persists your key across deploys
+   - **Without this, your key regenerates on each deploy → federation breaks, users can't log in**
+
+6. **Optional: Add volume for media storage:**
+   - If you want to persist uploaded media across deploys:
+   - Go to "Volumes" → "New Volume"
    - Set mount path: `/data`
-   - This ensures your signing keys and media don't get lost on redeploys
+   - Without a volume, media storage is ephemeral (lost on redeploy)
 
-5. **Set up a custom domain** (recommended):
+7. **Set up a custom domain** (recommended):
    - In Settings → Networking, add your domain
    - Point your DNS to Railway's provided URL
    - Make sure `SERVER_NAME` matches your domain
 
+## How It Works
+
+The deployment uses a startup script that:
+1. Reads `homeserver.yaml.template`
+2. Replaces `${VAR}` placeholders with environment variables
+3. Generates the final `homeserver.yaml`
+4. Starts Synapse
+
+This keeps secrets out of your repository while staying Railway-friendly.
+
 ## Important Notes
 
-- **Signing Key:** Generated automatically on first run and stored in `/data` volume
-- **Media Storage:** Stored locally in `/data/media_store` volume
-- **Registration:** Currently open (anyone can register) - fine for personal use
+- **CRITICAL - Signing Key:** Save `SYNAPSE_SIGNING_KEY` env var after first deploy, or your key will regenerate and break everything
+- **Environment Variables:** Railway auto-provides `PGUSER`, `PGPASSWORD`, `PGDATABASE`, `PGHOST`, `PGPORT` when you add PostgreSQL
+- **Media Storage:** Without a volume, media is ephemeral (lost on redeploy)
+- **Registration:** Currently open (anyone can register)
 - **Federation:** Enabled - your server can communicate with other Matrix servers
 
 ## Accessing Your Server

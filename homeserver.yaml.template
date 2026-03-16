@@ -12,15 +12,15 @@ listeners:
       - names: [client, federation]
         compress: false
 
-# Database (will use env var at runtime)
+# Database - Railway PostgreSQL (uses environment variables)
 database:
   name: psycopg2
   args:
-    user: ${DB_USER}
-    password: ${DB_PASSWORD}
-    database: ${DB_NAME}
-    host: ${DB_HOST}
-    port: ${DB_PORT}
+    user: ${PGUSER}
+    password: ${PGPASSWORD}
+    database: ${PGDATABASE}
+    host: ${PGHOST}
+    port: ${PGPORT}
     cp_min: 5
     cp_max: 10
 
